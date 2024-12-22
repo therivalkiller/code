@@ -1,31 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExpandAlt, faCompressAlt, faArrowsAlt } from '@fortawesome/free-solid-svg-icons'; // Added ArrowsAlt icon for fullscreen
-import { GoogleGenerativeAI } from "@google/generative-ai"; // Import the library
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExpandAlt,
+  faCompressAlt,
+  faArrowsAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import "./chatbot.css";
 
-// Initialize the Google Generative AI model with the API key from environment variables
-const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GOOGLE_API_KEY); // Using the API key from .env
+const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const Chatbot = ({ onCodeGenerate }) => {
-  const [isChatOpen, setIsChatOpen] = useState(true); // State for collapse/expand
-  const [userInput, setUserInput] = useState(""); // State for user input
-  const [messages, setMessages] = useState([]); // Chat messages
-  const [isFullscreen, setIsFullscreen] = useState(false); // State for fullscreen toggle
+  const [isChatOpen, setIsChatOpen] = useState(true);
+  const [userInput, setUserInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Load chat history from localStorage when the component mounts
   useEffect(() => {
-    const storedMessages = localStorage.getItem('chatHistory');
-    if (storedMessages) {
-      setMessages(JSON.parse(storedMessages)); // Parse and set chat history
-    }
+    const storedMessages = localStorage.getItem("chatHistory");
+    if (storedMessages) setMessages(JSON.parse(storedMessages));
   }, []);
 
-  // Save chat history to localStorage whenever messages change
   useEffect(() => {
     if (messages.length > 0) {
-      localStorage.setItem('chatHistory', JSON.stringify(messages)); // Save to localStorage
+      localStorage.setItem("chatHistory", JSON.stringify(messages));
     }
   }, [messages]);
 
@@ -36,74 +35,65 @@ const Chatbot = ({ onCodeGenerate }) => {
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      // Send the user input to Gemini API to get a response
-      const prompt = userInput;
-      const result = await model.generateContent(prompt);
-
-      // Get the AI response
+      const result = await model.generateContent(userInput);
       const botResponse = { sender: "bot", text: result.response.text() };
       setMessages((prev) => [...prev, botResponse]);
 
-      // Extract HTML, CSS, and JavaScript from the response text
       const responseText = result.response.text();
-
-      // Parse the response for HTML, CSS, and JavaScript content
       const htmlMatch = responseText.match(/```html([\s\S]*?)```/);
       const cssMatch = responseText.match(/```css([\s\S]*?)```/);
       const jsMatch = responseText.match(/```javascript([\s\S]*?)```/);
 
-      // Send extracted content to the parent component
-      if (htmlMatch) {
-        onCodeGenerate('html', htmlMatch[1].trim());
-      }
-      if (cssMatch) {
-        onCodeGenerate('css', cssMatch[1].trim());
-      }
-      if (jsMatch) {
-        onCodeGenerate('js', jsMatch[1].trim());
-      }
-
+      if (htmlMatch) onCodeGenerate("html", htmlMatch[1].trim());
+      if (cssMatch) onCodeGenerate("css", cssMatch[1].trim());
+      if (jsMatch) onCodeGenerate("js", jsMatch[1].trim());
     } catch (error) {
-      console.error("Error with the Gemini API:", error);
-      const errorResponse = { sender: "bot", text: "Sorry, there was an error processing your request." };
+      console.error("Error:", error);
+      const errorResponse = {
+        sender: "bot",
+        text: "Sorry, there was an error.",
+      };
       setMessages((prev) => [...prev, errorResponse]);
     }
-
-    setUserInput(""); // Clear input
+    setUserInput("");
+  };
+  const toggleChatOpen = () => {
+    setIsChatOpen((prev) => {
+      if (prev) {
+        setIsFullscreen(false); // Reset fullscreen when collapsing
+      }
+      return !prev;
+    });
   };
 
-  const toggleFullscreen = () => {
-    setIsFullscreen((prev) => !prev);
-  };
-
-  // Function to clear local storage
+  const toggleFullscreen = () => setIsFullscreen((prev) => !prev);
   const clearLocalStorage = () => {
-    localStorage.removeItem('chatHistory');
-    setMessages([]); // Clear messages from state as well
+    localStorage.removeItem("chatHistory");
+    setMessages([]);
   };
 
   return (
-    <div className={`chatbot ${isChatOpen ? "expanded" : "collapsed"} ${isFullscreen ? "fullscreen" : ""}`}>
+    <div
+      className={`chatbot ${isChatOpen ? "expanded" : "collapsed"} ${
+        isFullscreen ? "fullscreen" : ""
+      }`}
+    >
       <div className="chatbot-navbar">
         <span>Ask Here</span>
         <div>
-          <button
-            className="collapse-btn"
-            onClick={() => setIsChatOpen((prev) => !prev)}
-          >
+          <button className="collapse-btn" onClick={toggleChatOpen}>
             <FontAwesomeIcon icon={isChatOpen ? faCompressAlt : faExpandAlt} />
           </button>
-          <button
-            className="fullscreen-btn"
-            onClick={toggleFullscreen}
-          >
+
+          <button className="fullscreen-btn" onClick={toggleFullscreen}>
             <FontAwesomeIcon icon={faArrowsAlt} />
           </button>
         </div>
       </div>
 
-      {/* Clear Chat History Button */}
-      <button className="clear-btn" onClick={clearLocalStorage}>Clear Chat History</button>
+      <button className="clear-btn" onClick={clearLocalStorage}>
+        Clear Chat History
+      </button>
 
       {isChatOpen && (
         <div className="chatbot-body">
