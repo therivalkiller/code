@@ -4,6 +4,7 @@ import {
   faExpandAlt,
   faCompressAlt,
   faArrowsAlt,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "./chatbot.css";
@@ -92,7 +93,7 @@ const Chatbot = ({ onCodeGenerate }) => {
       </div>
 
       <button className="clear-btn" onClick={clearLocalStorage}>
-        Clear Chat History
+      <FontAwesomeIcon icon={faTrash} /> Clear Chat History
       </button>
 
       {isChatOpen && (
