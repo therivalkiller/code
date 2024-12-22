@@ -76,6 +76,12 @@ const Chatbot = ({ onCodeGenerate }) => {
     setIsFullscreen((prev) => !prev);
   };
 
+  // Function to clear local storage
+  const clearLocalStorage = () => {
+    localStorage.removeItem('chatHistory');
+    setMessages([]); // Clear messages from state as well
+  };
+
   return (
     <div className={`chatbot ${isChatOpen ? "expanded" : "collapsed"} ${isFullscreen ? "fullscreen" : ""}`}>
       <div className="chatbot-navbar">
@@ -95,6 +101,10 @@ const Chatbot = ({ onCodeGenerate }) => {
           </button>
         </div>
       </div>
+
+      {/* Clear Chat History Button */}
+      <button className="clear-btn" onClick={clearLocalStorage}>Clear Chat History</button>
+
       {isChatOpen && (
         <div className="chatbot-body">
           <div className="chat-messages">
