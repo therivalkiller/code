@@ -1,0 +1,128 @@
+.chatbot {
+  position: fixed;
+  right: 0;
+  bottom: 30px;
+  width: 500px;
+  background-color: #2c3e50;
+  color: white;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out, bottom 0.3s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.chatbot.collapsed {
+  bottom: 30px;
+  height: 30px;
+}
+
+.chatbot.expanded {
+  bottom: 30px;
+  height: 60%;
+}
+
+.chatbot.fullscreen {
+  width: 100vw;
+  height: 100vh;
+  bottom: 0;
+  right: 0;
+  border-radius: 0; /* Remove border radius for fullscreen */
+}
+
+.chatbot-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #34495e;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  font-weight: bold;
+}
+
+.collapse-btn,
+.fullscreen-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.fullscreen-btn {
+  color: #f39c12; /* Yellow color for fullscreen button */
+}
+
+.chatbot-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: #34495e;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.message {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #16a085;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background-color: #34495e;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #2c3e50;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+textarea {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #34495e;
+  color: white;
+  border: none;
+  resize: none;
+}
+
+textarea:focus {
+  outline: none;
+  background-color: #16a085;
+}
+
+button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #c0392b;
+}
