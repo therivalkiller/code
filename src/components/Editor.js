@@ -6,7 +6,7 @@ import "codemirror/mode/css/css"
 import "codemirror/mode/javascript/javascript"
 import { Controlled as ControlledEditor } from "react-codemirror2"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons'
+import { faCompressAlt, faExpandAlt, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export default function Editor(props) {
   const { displayName, language, value, onChange } = props
@@ -17,16 +17,30 @@ export default function Editor(props) {
     onChange(value)
   }
 
+  function clearEditor() {
+    onChange("")
+  }
+
   return (
     <div className={`editor-container ${open ? '' : 'collapsed'}`}>
       <div className="editor-title">
         {displayName}
-        <button
-          type="button"
-          className="expand-collapse btn"
-          onClick={()=> setOpen(prevOpen => !prevOpen) }>
-            <FontAwesomeIcon icon={open ? faCompressAlt : faExpandAlt}/>
+        <div className="editor-buttons">
+          <button
+            type="button"
+            className="clear-editor-btn btn"
+            onClick={clearEditor}
+            title="Clear editor">
+              <FontAwesomeIcon icon={faTrash}/>
           </button>
+          <button
+            type="button"
+            className="expand-collapse btn"
+            onClick={()=> setOpen(prevOpen => !prevOpen)}
+            title={open ? "Collapse" : "Expand"}>
+              <FontAwesomeIcon icon={open ? faCompressAlt : faExpandAlt}/>
+          </button>
+        </div>
       </div>
       <ControlledEditor
         onBeforeChange={handleChange}
