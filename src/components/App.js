@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import Editor from "./Editor";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExpand, faCompress } from "@fortawesome/free-solid-svg-icons";
+import { faExpand, faCompress, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import Chatbot from "./chatbot/chatbot";
+import Modal from "./Modal";
 
 function App() {
   const [html, setHtml] = useLocalStorage("html", "");
@@ -11,6 +12,7 @@ function App() {
   const [js, setJs] = useLocalStorage("js", "");
   const [srcDoc, setSrcDoc] = useState("");
   const [iframeOpen, setIframeOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(true); // Show modal on page load
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -26,7 +28,6 @@ function App() {
     return () => clearTimeout(timeout);
   }, [html, css, js]);
 
-  // Function to update the code from chatbot response
   const handleCodeGenerate = (type, code) => {
     if (type === "html") {
       setHtml(code);
@@ -39,6 +40,7 @@ function App() {
 
   return (
     <>
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
       <div className={`pane ${iframeOpen ? "collapsed-pane" : "top-pane"}`}>
         <Editor
           language="xml"
@@ -77,6 +79,11 @@ function App() {
         </button>
       </div>
       <Chatbot onCodeGenerate={handleCodeGenerate} />
+
+      {/* Help Button */}
+      <button className="help-button" onClick={() => setModalOpen(true)}>
+        <FontAwesomeIcon icon={faQuestionCircle} />
+      </button>
     </>
   );
 }
